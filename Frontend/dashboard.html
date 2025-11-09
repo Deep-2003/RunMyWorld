@@ -1,568 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RunAnywhere AI - Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RunMyWorld • AI That Runs Anywhere</title>
+    <meta name="description" content="Deploy, manage, and scale AI agents across any device with zero friction." />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0a0a0f;
+            --card: #14142a;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --primary: #a78bfa;
+            --primary-dark: #8b5cf6;
+            --accent: #667eea;
+            --border: #3a2a5e;
+            --glow: rgba(167, 139, 250, 0.3);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0a0a0f;
-            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Navigation */
+        /* Navbar */
         .navbar {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background: rgba(10, 10, 15, 0.9);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #3a2a5e;
+            top: 0; left: 0; right: 0;
+            height: 76px;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 5%;
             z-index: 1000;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
         }
-
         .navbar.scrolled {
-            background: rgba(10, 10, 15, 0.95);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(10, 10, 15, 0.98);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            height: 68px;
         }
 
         .logo {
-            font-size: 26px;
-            font-weight: bold;
-            color: #a78bfa;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
         }
-
-        .logo::before {
-            content: "⟨";
-            color: #a78bfa;
-        }
+        .logo span { color: #fff; }
 
         .nav-links {
             margin-left: auto;
             display: flex;
-            gap: 30px;
+            gap: 32px;
             align-items: center;
         }
-
         .nav-links a {
             color: #cbd5e1;
             text-decoration: none;
             font-weight: 500;
             font-size: 15px;
-            transition: color 0.3s;
             position: relative;
+            transition: color 0.3s;
         }
-
-        .nav-links a:hover {
-            color: #a78bfa;
-        }
-
+        .nav-links a:hover { color: var(--primary); }
         .nav-links a::after {
             content: '';
             position: absolute;
             bottom: -8px;
-            left: 0;
+            left: 50%;
             width: 0;
             height: 2px;
-            background: #a78bfa;
-            transition: width 0.3s;
+            background: var(--primary);
+            transition: all 0.3s;
+            transform: translateX(-50%);
         }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 100%; }
 
         .nav-btn {
-            background: linear-gradient(135deg, #a78bfa, #667eea);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .nav-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.4);
+            box-shadow: 0 10px 25px var(--glow);
         }
 
-        /* Hero Section */
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        @media (max-width: 992px) {
+            .nav-links { 
+                position: fixed;
+                top: 76px; left: 0; right: 0;
+                background: rgba(10, 10, 15, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 2rem 5%;
+                gap: 20px;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.4s ease;
+            }
+            .nav-links.open {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            .menu-toggle { display: block; margin-left: auto; }
+        }
+
+        /* Hero */
         .hero {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 0 20px;
+            padding: 0 5%;
             position: relative;
             overflow: hidden;
         }
-
         .hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(167, 139, 250, 0.15) 0%, transparent 60%);
-            animation: float 15s infinite ease-in-out;
+            inset: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(167, 139, 250, 0.2), transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(102, 126, 234, 0.15), transparent 50%);
+            animation: pulse 20s infinite;
         }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-30px) scale(1.05); }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
 
         .hero-content {
-            max-width: 900px;
+            max-width: 1000px;
             z-index: 2;
         }
-
         .hero h1 {
-            font-size: 52px;
+            font-size: clamp(42px, 8vw, 72px);
             font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #a78bfa, #c4b5fd);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .hero p {
-            font-size: 18px;
-            color: #cbd5e1;
-            margin-bottom: 30px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 20px;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto 40px;
         }
-
         .cta-buttons {
             display: flex;
-            gap: 15px;
+            gap: 18px;
             justify-content: center;
             flex-wrap: wrap;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #a78bfa, #667eea);
-            color: white;
-            padding: 14px 32px;
-            border: none;
-            border-radius: 14px;
+        .btn-primary, .btn-secondary {
+            padding: 16px 36px;
+            border-radius: 16px;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 17px;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.3);
+            transition: all 0.3s ease;
         }
-
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px var(--glow);
+        }
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(167, 139, 250, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px var(--glow);
         }
-
         .btn-secondary {
             background: transparent;
-            color: #a78bfa;
-            border: 2px solid #a78bfa;
-            padding: 12px 30px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
-
         .btn-secondary:hover {
-            background: rgba(167, 139, 250, 0.1);
-            transform: translateY(-3px);
+            background: rgba(167, 139, 250, 0.15);
+            transform: translateY(-4px);
         }
 
-        /* Features Section */
-        .features {
-            padding: 100px 20px;
-            background: #0f0f1a;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
+        /* Sections */
+        section { padding: 120px 5%; }
+        .container { max-width: 1280px; margin: 0 auto; }
         .section-title {
             text-align: center;
-            font-size: 36px;
-            color: #a78bfa;
-            margin-bottom: 60px;
-            position: relative;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 70px;
+            background: linear-gradient(135deg, #a78bfa, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, #a78bfa, #667eea);
-            border-radius: 2px;
-        }
-
+        /* Features */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
         }
-
         .feature-card {
-            background: rgba(20, 20, 40, 0.7);
-            border: 1px solid #3a2a5e;
-            border-radius: 18px;
-            padding: 35px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 30px;
             text-align: center;
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
-
         .feature-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #a78bfa, #667eea);
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
             transform: scaleX(0);
             transition: transform 0.4s;
         }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
+        .feature-card:hover::before { transform: scaleX(1); }
         .feature-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(167, 139, 250, 0.2);
-            border-color: #a78bfa;
+            transform: translateY(-16px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(167, 139, 250, 0.25);
         }
-
         .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #a78bfa, #667eea);
+            font-size: 56px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .feature-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #ffffff;
-        }
-
-        .feature-card p {
-            color: #94a3b8;
-            font-size: 15px;
-        }
-
-        /* Team Section */
-        .team {
-            padding: 100px 20px;
-            background: #0a0a0f;
-        }
-
+        /* Team */
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            margin-top: 50px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin-top: 20px;
         }
-
         .team-member {
             text-align: center;
-            transition: all 0.3s;
+            transition: transform 0.3s;
         }
-
-        .team-member:hover {
-            transform: translateY(-8px);
-        }
-
+        .team-member:hover { transform: translateY(-10px); }
         .member-avatar {
-            width: 90px;
-            height: 90px;
+            width: 100px; height: 100px;
             border-radius: 50%;
-            margin: 0 auto 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            color: #ffffff;
-            position: relative;
-            overflow: hidden;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
-        .member-avatar::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border: 2px solid #a78bfa;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .team-member:hover .member-avatar::after {
-            opacity: 1;
-        }
-
-        .member-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .member-role {
-            font-size: 14px;
-            color: #a78bfa;
-            font-weight: 500;
-        }
-
-        /* CTA Section */
+        /* CTA & Footer */
         .cta {
-            padding: 100px 20px;
+            background: linear-gradient(135deg, #1a0d2e, #2a1b4d);
             text-align: center;
-            background: linear-gradient(135deg, #1a0d2e 0%, #2a1b4d 100%);
         }
-
-        .cta h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #a78bfa, #c4b5fd);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .cta p {
-            font-size: 18px;
-            color: #cbd5e1;
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Footer */
         .footer {
             background: #0f0f1a;
-            padding: 60px 20px 30px;
-            border-top: 1px solid #3a2a5e;
+            border-top: 1px solid var(--border);
+            padding: 80px 5% 40px;
         }
-
         .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
-
-        .footer-col h3 {
-            color: #a78bfa;
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 12px;
-        }
-
-        .footer-col ul li a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-
-        .footer-col ul li a:hover {
-            color: #a78bfa;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid #3a2a5e;
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .footer-bottom a {
-            color: #a78bfa;
-            text-decoration: none;
-        }
-
-        .footer-bottom a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 38px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .navbar {
-                padding: 0 20px;
-            }
-
-            .section-title {
-                font-size: 30px;
-            }
-        }
+        .footer-col h3 { color: var(--primary); margin-bottom: 20px; }
+        .footer-col a { color: var(--text-light); text-decoration: none; font-size: 15px; }
+        .footer-col a:hover { color: var(--primary); }
     </style>
 </head>
 <body>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
-        <div class="logo">RunAnywhere AI</div>
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#team">Team</a>
-            <a href="about.html">About</a>
-            <a href="login.html">Login</a>
-            <a href="signup.html" class="nav-btn">Get Started</a>
+        <div class="logo">Run<span>MyWorld</span></div>
+        <button class="menu-toggle" aria-label="Toggle menu">Menu</button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html" class="active">Home</a>
+            <a href="login.html" class="auth-link">Login</a>
+            <a href="signup.html" class="auth-link">Signup</a>
+            <a href="dashboard.html" class="protected">Dashboard</a>
+            <a href="tasks.html" class="protected">Tasks</a>
+            <a href="schedule.html" class="protected">Schedule</a>
+            <a href="devices.html" class="protected">Devices</a>
+            <a href="profile.html" class="protected">Profile</a>
+            <a href="settings.html" class="protected">Settings</a>
+            <a href="#" onclick="logout()" class="protected">Logout</a>
+            <button class="nav-btn auth-link">Get Started</button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-content">
-            <h1>AI That Runs Anywhere</h1>
-            <p>Deploy, manage, and scale intelligent models across any cloud, edge, or on-premise environment with zero friction. Built for developers, loved by enterprises.</p>
+            <h1>AI That Runs <span style="background: linear-gradient(135deg,#f472b6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Anywhere</span></h1>
+            <p>Deploy autonomous AI agents across cloud, edge, and mobile devices. Zero setup. Real-time sync. Built for the future.</p>
             <div class="cta-buttons">
                 <button class="btn-primary" onclick="window.location.href='signup.html'">Start Free Trial</button>
-                <button class="btn-secondary" onclick="window.location.href='#features'">Explore Features</button>
+                <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Explore Features</button>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Features -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">Powerful Features</h2>
+            <h2 class="section-title">Why Developers Love Us</h2>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">Cloud</div>
-                    <h3>Multi-Cloud Deploy</h3>
-                    <p>Seamlessly deploy AI models to AWS, GCP, Azure, or private clouds with one-click configuration.</p>
+                    <h3>Hybrid Execution</h3>
+                    <p>Run agents locally or in the cloud — automatically switch based on connectivity.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">Edge</div>
-                    <h3>Edge Intelligence</h3>
-                    <p>Run lightweight models on edge devices with automatic optimization and real-time inference.</p>
+                    <div class="feature-icon">Mobile</div>
+                    <h3>On-Device Intelligence</h3>
+                    <p>Native Android app with full offline support using RunAnywhere SDK.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">AutoML</div>
-                    <h3>AutoML Pipeline</h3>
-                    <p>Automated data preprocessing, model selection, hyperparameter tuning, and deployment.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">Monitor</div>
-                    <h3>Real-time Monitoring</h3>
-                    <p>Track model performance, drift detection, latency, and resource usage with live dashboards.</p>
+                    <div class="feature-icon">Sync</div>
+                    <h3>Real-Time Sync</h3>
+                    <p>Firebender-powered live sync between web dashboard and mobile.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">Secure</div>
-                    <h3>Enterprise Security</h3>
-                    <p>End-to-end encryption, role-based access, audit logs, and compliance with SOC2, GDPR.</p>
+                    <h3>Encrypted Storage</h3>
+                    <p>AndroidX Crypto + Room DB keeps your agents safe.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">Schedule</div>
+                    <h3>Smart Scheduling</h3>
+                    <p>Trigger agents on time, location, or events.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">API</div>
-                    <h3>REST & gRPC APIs</h3>
-                    <p>Integrate AI predictions into any application with auto-generated SDKs and documentation.</p>
+                    <h3>Open API</h3>
+                    <p>Integrate with any tool via REST + WebSockets.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Team Section -->
+    <!-- Team -->
     <section class="team" id="team">
         <div class="container">
-            <h2 class="section-title">Meet Our Team</h2>
+            <h2 class="section-title">Built by Passionate Humans</h2>
             <div class="team-grid">
                 <div class="team-member">
                     <div class="member-avatar">D</div>
                     <div class="member-name">Deepanshu Singh</div>
-                    <div class="member-role">Project Lead & Frontend</div>
+                    <div class="member-role">Project Lead • Frontend</div>
                 </div>
                 <div class="team-member">
-                    <div class="member-avatar" style="background: linear-gradient(135deg, #10b981, #34d399);">A</div>
+                    <div class="member-avatar" style="background: linear-gradient(135deg,#10b981,#34d399)">A</div>
                     <div class="member-name">Ayush Kumar</div>
-                    <div class="member-role">Android Development</div>
+                    <div class="member-role">Android • SDK Integration</div>
                 </div>
                 <div class="team-member">
-                    <div class="member-avatar" style="background: linear-gradient(135deg, #ec4899, #f472b6);">M</div>
+                    <div class="member-avatar" style="background: linear-gradient(135deg,#ec4899,#f472b6)">K</div>
                     <div class="member-name">Kriti Dwivedi</div>
                     <div class="member-role">UI/UX Designer</div>
                 </div>
                 <div class="team-member">
-                    <div class="member-avatar" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">Ab</div>
+                    <div class="member-avatar" style="background: linear-gradient(135deg,#f59e0b,#fbbf24)">Ab</div>
                     <div class="member-name">Abhay Kumar Verma</div>
-                    <div class="member-role">Backend Development</div>
+                    <div class="member-role">Backend • Firebender</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- CTA -->
     <section class="cta">
         <div class="container">
-            <h2>Ready to Deploy AI Anywhere?</h2>
-            <p>Join thousands of developers building the future with RunAnywhere AI. Start your free 14-day trial today.</p>
-            <button class="btn-primary" onclick="window.location.href='signup.html'">Get Started Free</button>
+            <h2>Join the Future of Autonomous AI</h2>
+            <p>No credit card required • 14-day free trial • Cancel anytime</p>
+            <button class="btn-primary" style="font-size:18px;padding:18px 42px;" onclick="window.location.href='signup.html'">
+                Get Started — It's Free
+            </button>
         </div>
     </section>
 
@@ -571,66 +429,62 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-col">
-                    <h3>RunAnywhere AI</h3>
-                    <p style="color: #94a3b8; font-size: 14px;">AI deployment platform for the modern enterprise.</p>
+                    <h3>RunMyWorld</h3>
+                    <p style="color:#94a3b8;font-size:14px;">Autonomous AI agents for everyone.</p>
                 </div>
                 <div class="footer-col">
                     <h3>Product</h3>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">API</a></li>
-                    </ul>
+                    <ul><li><a href="#features">Features</a></li><li><a href="#">Docs</a></li><li><a href="#">API</a></li></ul>
                 </div>
                 <div class="footer-col">
                     <h3>Company</h3>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
+                    <ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul>
                 </div>
                 <div class="footer-col">
                     <h3>Legal</h3>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">Security</a></li>
-                    </ul>
+                    <ul><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li></ul>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 RunAnywhere AI. All rights reserved. | <a href="#">team@runanywhere.ai</a></p>
+            <div style="text-align:center;padding-top:30px;border-top:1px solid var(--border);color:#64748b;font-size:14px;">
+                © 2025 RunMyWorld. Made with passion for VibeState '25.
             </div>
         </div>
     </footer>
 
     <script>
-        // Navbar scroll effect
+        // Navbar scroll + mobile menu
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.getElementById('navLinks');
+        const menuToggle = document.querySelector('.menu-toggle');
+
         window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
         });
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+
+        // Active link highlighting
+        document.querySelectorAll('.nav-links a[href]').forEach(link => {
+            if (link.href === location.href) link.classList.add('active');
+        });
+
+        // Auth protection
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            document.querySelectorAll('.protected').forEach(el => {
+                el.style.display = token ? 'block' : 'none';
+            });
+            document.querySelectorAll('.auth-link').forEach(el => {
+                el.style.display = token ? 'none' : 'block';
             });
         });
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
