@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RunAnyWhere SDK – Dashboard</title>
+
+  <!-- Tailwind (via CDN – production use build) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#a78bfa',
+            'primary-dark': '#7c3aed',
+            bg: '#0a0a0f',
+            card: '#14141f',
+            border: '#3a2a5e',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- date-fns for calendar -->
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/index.min.js"></script>
+
+  <style>
+    .hidden {
+      display: none !important;
+    }
+
+    .modal-backdrop {
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+
+<body class="bg-bg text-gray-100 min-h-screen flex">
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <nav class="flex-1 px-4 space-y-1">
+    <a href="dashboard.html"
+      class="nav-link w-full text-left py-2.5 px-4 rounded-lg bg-primary/10 text-primary font-medium flex items-center gap-2">
+      <span>Dashboard</span>
+    </a>
+    <a href="tasks.html"
+      class="nav-link w-full text-left py-2.5 px-4 rounded-lg hover:bg-primary/5 flex items-center gap-2">
+      <span>Tasks</span>
+    </a>
+    <a href="devices.html"
+      class="nav-link w-full text-left py-2.5 px-4 rounded-lg hover:bg-primary/5 flex items-center gap-2">
+      <span>Devices</span>
+    </a>
+    <a href="schedule.html"
+      class="nav-link w-full text-left py-2.5 px-4 rounded-lg hover:bg-primary/5 flex items-center gap-2">
+      <span>Schedule</span>
+    </a>
+    <a href="settings.html"
+      class="nav-link w-full text-left py-2.5 px-4 rounded-lg hover:bg-primary/5 flex items-center gap-2">
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <!-- ==================== MAIN ==================== -->
+  <main class="flex-1 flex flex-col">
+
+    <!-- TOPBAR -->
+    <header class="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
+      <input id="searchInput"
+        class="w-80 bg-gray-800 text-sm rounded-lg px-4 py-2 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+        placeholder="Search tasks, devices…" />
+      <div class="flex items-center gap-4">
+        <button id="notifBtn" class="relative p-2 rounded-full hover:bg-gray-800"><span class="text-xl">Bell</span><span
+            class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span></button>
+        <div class="w-9 h-9 bg-primary rounded-full flex items-center justify-center text-sm font-bold">MR</div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <section class="flex-1 p-6 overflow-y-auto">
+
+      <!-- STATS ROW -->
+      <div id="statsRow" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"></div>
+
+      <!-- THREE-COLUMN LAYOUT -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        <!-- LEFT -->
+        <div class="space-y-6">
+          <!-- Upcoming Tasks -->
+          <section class="bg-card rounded-xl p-5 border border-border">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="text-lg font-semibold">Upcoming Tasks</h3>
+                <p class="text-sm text-gray-400">Next scheduled</p>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm" id="tasksTable">
+                <thead class="border-b border-border">
+                  <tr>
+                    <th class="text-left py-2">Task</th>
+                    <th class="text-left py-2">Type</th>
+                    <th class="text-left py-2">Time</th>
+                    <th class="text-left py-2">Device</th>
+                    <th class="text-left py-2">Status</th>
+                    <th class="text-left py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Activity Timeline -->
+          <section class="bg-card rounded-xl p-5 border border-border">
+            <h3 class="text-lg font-semibold mb-3">Activity Timeline</h3>
+            <ul id="activityList" class="space-y-3 text-sm"></ul>
+          </section>
+        </div>
+
+        <!-- CENTER -->
+        <div class="space-y-6">
+          <!-- Quick Schedule + Calendar -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-card rounded-xl p-5 border border-border">
+              <h4 class="font-medium mb-3">Quick Schedule</h4>
+              <form id="quickForm" class="space-y-3">
+                <input id="qTaskName" class="w-full bg-gray-800 rounded px-3 py-2 text-sm" placeholder="Task name"
+                  required />
+                <select id="qTaskType" class="w-full bg-gray-800 rounded px-3 py-2 text-sm">
+                  <option>Message</option>
+                  <option>Alarm</option>
+                  <option>App</option>
+                  <option>Automation</option>
+                </select>
+                <input id="qTaskTime" type="datetime-local" class="w-full bg-gray-800 rounded px-3 py-2 text-sm"
+                  required />
+                <button type="submit"
+                  class="w-full bg-primary hover:bg-primary-dark text-white py-2 rounded text-sm font-medium transition">Schedule</button>
+              </form>
+            </div>
+
+            <div class="bg-card rounded-xl p-5 border border-border">
+              <h4 class="font-medium mb-3">Calendar</h4>
+              <div class="flex justify-between items-center mb-2">
+                <button id="prevMonth" class="text-xl">Left Arrow</button>
+                <span id="calendarHeader" class="font-medium"></span>
+                <button id="nextMonth" class="text-xl">Right Arrow</button>
+              </div>
+              <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+            </div>
+          </div>
+
+          <!-- Pie Chart -->
+          <section class="bg-card rounded-xl p-5 border border-border">
+            <h3 class="text-lg font-semibold mb-3">Task Distribution</h3>
+            <canvas id="pieChart"></canvas>
+          </section>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="space-y-6">
+          <!-- Devices -->
+          <section class="bg-card rounded-xl p-5 border border-border">
+            <h3 class="text-lg font-semibold mb-3">Connected Devices</h3>
+            <div id="devicesList" class="space-y-3"></div>
+          </section>
+
+          <!-- Mini Stats -->
+          <section class="bg-card rounded-xl p-5 border border-border">
+            <h3 class="text-lg font-semibold mb-3">Top Statistics</h3>
+            <div id="miniStats" class="grid grid-cols-2 gap-3 text-sm"></div>
+          </section>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODAL ==================== -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-black/70 modal-backdrop hidden items-center justify-center z-50">
+    <div class="bg-card rounded-xl p-6 w-full max-w-md border border-border">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="modalTitle" class="text-xl font-semibold">Edit Task</h3>
+        <button id="closeModal" class="text-xl">Cross</button>
+      </div>
+      <form id="modalForm" class="space-y-3">
+        <input id="mName" class="w-full bg-gray-800 rounded px-3 py-2" placeholder="Task name" required />
+        <select id="mType" class="w-full bg-gray-800 rounded px-3 py-2"></select>
+        <input id="mTime" type="datetime-local" class="w-full bg-gray-800 rounded px-3 py-2" required />
+        <select id="mDevice" class="w-full bg-gray-800 rounded px-3 py-2"></select>
+        <select id="mStatus" class="w-full bg-gray-800 rounded px-3 py-2">
+          <option>Pending</option>
+          <option>Active</option>
+          <option>Completed</option>
+        </select>
+        <div class="flex gap-2 mt-4">
+          <button type="submit"
+            class="flex-1 bg-primary hover:bg-primary-dark text-white py-2 rounded font-medium transition">Save</button>
+          <button type="button" id="deleteTask"
+            class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded font-medium transition">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== JS ==================== -->
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>
